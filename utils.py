@@ -88,8 +88,9 @@ def get_averages(message):
     plt.grid(True)
 
     msg = (
-        f"__Ticker: {message.message_array[1]}__\n"
-        f"Last day available: {etf.index[-1]} Closed price: {etf.iloc[-1]['Adj Close']:0.2f}\n"
+        f"# Ticker: {message.message_array[1]}\n"
+        f"Last day available: {etf.index[-1]}\n"
+        f"Closed price: {etf.iloc[-1]['Adj Close']:0.2f}\n"
         f"SMA 30 days: {etf.iloc[-1]['SMA_30']:0.2f}\n"
         f"SMA 100 days: {etf.iloc[-1]['SMA_100']:0.2f}\n"
         f"SMA 300 days {etf.iloc[-1]['SMA_300']:0.2f}"
