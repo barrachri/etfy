@@ -83,13 +83,12 @@ def get_averages(message):
     plt.legend(loc=2)
     plt.grid(True)
     
-    msg = f"**Ticker: {}** - Day: {} - Closed price: {:0.2f} - SMA 30 days: {:0.2f} - SMA 100 days: {:0.2f}	- SMA 300 days {:0.2f}"
-    msg = msg.format(message.message_array[0],
-                                 message.message_array[1],
-                                 etf.index[-1],
-                                 etf.iloc[-1]['Adj Close'],
-                                 etf.iloc[-1]['SMA_30'],
-                                 etf.iloc[-1]['SMA_100'],
-                                 etf.iloc[-1]['SMA_300']
-                                 )
+    msg = (
+        f"**Ticker: {message.message_array[0]}**"
+        f"Day: {etf.index[-1]} Closed price: {etf.iloc[-1]['Adj Close']:0.2f}"
+        f"SMA 30 days: {etf.iloc[-1]['SMA_30']:0.2f}"
+        f"SMA 100 days: {etf.iloc[-1]['SMA_100']:0.2f}"
+        f"SMA 300 days {etf.iloc[-1]['SMA_300']:0.2f}"
+        )
+
     return msg, plt
