@@ -13,7 +13,7 @@ from sanic import Sanic
 from sanic.response import json
 
 import telegram
-from utils import message_handling, 
+from utils import message_handling, get_averages
 
 # Start sanic
 app = Sanic()
