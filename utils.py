@@ -1,4 +1,5 @@
 import uuid
+import logging
 from datetime import datetime, timedelta
 
 import matplotlib
@@ -8,6 +9,9 @@ import matplotlib.pyplot as plt
 
 import pandas as pd
 from pandas_datareader import data as web
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 def message_handling(data):
     '''Get a message from the Telegram server and returns a message object with the data that we need'''
@@ -48,14 +52,17 @@ def get_averages(message):
     try:
         etf = web.DataReader(message.message_array[1], "yahoo")
     except OSError:
-        msg = "ETF: {} - Codice errato".format(message.message_array[1])
+        logger.info(f"Message: {message}")
+        msg = f"Ticker: {message.message_array[1]} doens't exist"
+
         return msg, None
+
     column = ['Adj Close']
     for col in etf.columns.tolist():
         if col not in column:
             etf = etf.drop(col, 1)
     calc_rolling_mean(etf, [30, 100, 300])
-    
+
     last_year = etf.index[-1]
     from_year = str(last_year.year-4)
     etf = etf[from_year:]
@@ -76,7 +83,7 @@ def get_averages(message):
     plt.legend(loc=2)
     plt.grid(True)
     
-    msg = "COMMAND: {} - ETF: {} - Day: {} - Closed price: {:0.2f} - SMA 30 days: {:0.2f} - SMA 100 days: {:0.2f}	- SMA 300 days {:0.2f}"
+    msg = f"**Ticker: {}** - Day: {} - Closed price: {:0.2f} - SMA 30 days: {:0.2f} - SMA 100 days: {:0.2f}	- SMA 300 days {:0.2f}"
     msg = msg.format(message.message_array[0],
                                  message.message_array[1],
                                  etf.index[-1],
