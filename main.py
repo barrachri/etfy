@@ -4,10 +4,7 @@ author: Christian Barra
 """
 import os
 import logging
-import uuid
 from io import BytesIO
-from collections import namedtuple
-from datetime import datetime
 
 from sanic import Sanic
 from sanic.response import json
@@ -43,13 +40,13 @@ async def webHookTelegram(request):
     logger.debug(f"Request: {request.json}")
     message = message_handling(request.json)
     logger.info(f"Message: {message}")
-    
+
     if message.message_array[0] == "/etf":
         if len(message.message_array) > 1:
             text, plt = get_averages(message)
             bot.sendMessage(chat_id=message.chat_id,
-                        text=text,
-                        parse_mode=telegram.ParseMode.MARKDOWN)
+                            text=text,
+                            parse_mode=telegram.ParseMode.MARKDOWN)
             if plt is not None:
                 buf = BytesIO()
                 plt.savefig(buf, format='png')

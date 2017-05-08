@@ -1,26 +1,26 @@
-import uuid
 import logging
-from datetime import datetime, timedelta
+from collections import namedtuple
 
 import matplotlib
 # this line is needed to avoid ModuleNotFoundError: No module named '_tkinter'
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-import pandas as pd
 from pandas_datareader import data as web
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+
 def message_handling(data):
-    '''Get a message from the Telegram server and returns a message object with the data that we need'''
+    '''Get a message from the Telegram server
+    returns a message object with the data that we need'''
 
     Message = namedtuple('Message', [
         'text', 'first_name',
         'chat_id', 'message_id', 'message_lower_case',
-        'message_array', 'update_id' ])
-    
+        'message_array', 'update_id'])
+
     text = data['message']['text']
     first_name = data['message']['chat']['first_name']
     chat_id = data['message']['chat']['id']
@@ -39,15 +39,19 @@ def message_handling(data):
         message_lower,
         message_array,
         update_id)
-    
+
     return message
+
 
 def calc_rolling_mean(df, list_of_averages):
     for average in list_of_averages:
         column_name = "SMA_{}".format(average)
         df[column_name] = df['Adj Close'].rolling(window=average).mean()
 
+
 def get_averages(message):
+    """ calcs the moving average of a given ticker
+    returns a message and matplotlib image"""
 
     try:
         etf = web.DataReader(message.message_array[1], "yahoo")
@@ -66,7 +70,7 @@ def get_averages(message):
     last_year = etf.index[-1]
     from_year = str(last_year.year-4)
     etf = etf[from_year:]
-    
+
     # PLOT
     plt.style.use('fivethirtyeight')
     plt.figure(figsize=(20, 10))
@@ -82,7 +86,7 @@ def get_averages(message):
     plt.autoscale(tight=True)
     plt.legend(loc=2)
     plt.grid(True)
-    
+
     msg = (
         f"**Ticker: {message.message_array[0]}**"
         f"Day: {etf.index[-1]} Closed price: {etf.iloc[-1]['Adj Close']:0.2f}"
